@@ -1,5 +1,10 @@
 <template>
 
+  <Head>
+    <Title>Nuxt PWA Offline Test</Title>
+    <NuxtPwaAssets />
+  </Head>
+
   <UApp>
     <NuxtRouteAnnouncer />
 
