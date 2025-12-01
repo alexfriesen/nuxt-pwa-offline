@@ -4,6 +4,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@vite-pwa/nuxt', '@nuxt/ui'],
   css: ['~/assets/css/main.css'],
+  app: {
+    baseURL: '/nuxt-pwa-offline/',
+  },
   pwa: {
     mode: 'development',
     strategies: 'injectManifest',
