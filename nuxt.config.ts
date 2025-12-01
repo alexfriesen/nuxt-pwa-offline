@@ -8,11 +8,11 @@ export default defineNuxtConfig({
     baseURL: '/nuxt-pwa-offline/',
   },
   pwa: {
-    mode: 'development',
-    strategies: 'injectManifest',
+    // mode: 'development',
+    // strategies: 'generateSW',
     registerType: 'autoUpdate',
-    srcDir: 'service-worker',
-    filename: 'sw.ts', // 'prompt-sw.js',
+    // srcDir: 'service-worker',
+    // filename: 'sw.ts', // 'prompt-sw.js',
     manifest: {
       scope: '/nuxt-pwa-offline/',
       name: 'testing nuxt pwa',
@@ -29,16 +29,16 @@ export default defineNuxtConfig({
       cleanupOutdatedCaches: true,
       clientsClaim: true,
     },
-    injectManifest: {
-      globPatterns: [
-        '**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}',
-      ],
-      globIgnores: ['manifest.webmanifest'],
-    },
-    client: {
-      installPrompt: true,
-      periodicSyncForUpdates: 5 * 60,
-    },
+    // injectManifest: {
+    //   globPatterns: [
+    //     '**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}',
+    //   ],
+    //   globIgnores: ['manifest.webmanifest'],
+    // },
+    // client: {
+    //   installPrompt: true,
+    //   periodicSyncForUpdates: 5 * 60,
+    // },
     devOptions: {
       enabled: true,
       suppressWarnings: true,
