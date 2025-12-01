@@ -4,33 +4,56 @@ import {
   createHandlerBoundToURL,
   precacheAndRoute,
 } from 'workbox-precaching';
-import { clientsClaim } from 'workbox-core';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { NetworkFirst } from 'workbox-strategies';
 import { NavigationRoute, registerRoute } from 'workbox-routing';
 
 declare let self: ServiceWorkerGlobalScope;
-
-// self.__WB_MANIFEST is the default injection point
-precacheAndRoute(self.__WB_MANIFEST, {
-  urlManipulation: ({ url }) => {
-    const urls: URL[] = [];
-    if (url.pathname.endsWith('_payload.json')) {
-      const newUrl = new URL(url.href);
-      newUrl.search = '';
-      urls.push(newUrl);
-    }
-    return urls;
-  },
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
+
+const entries = self.__WB_MANIFEST;
+if (import.meta.dev)
+  entries.push({ url: '/', revision: Math.random().toString() });
+
+precacheAndRoute(entries);
 
 // clean old assets
 cleanupOutdatedCaches();
 
-let allowlist: RegExp[] | undefined;
-// in dev mode, we disable precaching to avoid caching issues
+let allowlist: undefined | RegExp[];
 if (import.meta.dev) allowlist = [/^\/$/];
 
-// to allow work offline
-registerRoute(new NavigationRoute(createHandlerBoundToURL('/'), { allowlist }));
+// deny api and server page calls
+let denylist: undefined | RegExp[];
+if (!import.meta.dev) {
+  denylist = [
+    /^\/about\//,
+    // exclude sw: if the user navigates to it, fallback to index.html
+    /^\/sw.js$/,
+    // exclude webmanifest: has its own cache
+    /^\/manifest.webmanifest$/,
+  ];
+}
 
-self.skipWaiting();
-clientsClaim();
+if (!import.meta.dev) {
+  // include webmanifest cache
+  registerRoute(
+    ({ request, sameOrigin }) =>
+      sameOrigin && request.destination === 'manifest',
+    new NetworkFirst({
+      cacheName: 'webmanifest',
+      plugins: [
+        new CacheableResponsePlugin({ statuses: [200] }),
+        // we only need a few entries
+        new ExpirationPlugin({ maxEntries: 100 }),
+      ],
+    })
+  );
+}
+
+registerRoute(
+  new NavigationRoute(createHandlerBoundToURL('/'), { allowlist, denylist })
+);

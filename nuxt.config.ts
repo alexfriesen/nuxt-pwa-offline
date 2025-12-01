@@ -14,35 +14,12 @@ export default defineNuxtConfig({
     srcDir: 'service-worker',
     filename: 'sw.ts', // 'prompt-sw.js',
     manifest: {
+      scope: '/nuxt-pwa-offline/',
       name: 'testing nuxt pwa',
       short_name: 'nuxt-pwa',
       description: 'A Nuxt 4 PWA example with Vite PWA module',
-      theme_color: '#00bbff',
       display: 'standalone',
       lang: 'en',
-      // icons: [
-      //   {
-      //     src: 'favicon.svg',
-      //     sizes: 'any',
-      //     type: 'image/svg+xml',
-      //   },
-      //   {
-      //     src: 'icons/logo-192.png',
-      //     sizes: '192x192',
-      //     type: 'image/png',
-      //   },
-      //   {
-      //     src: 'icons/logo-512.png',
-      //     sizes: '512x512',
-      //     type: 'image/png',
-      //   },
-      //   {
-      //     src: 'icons/logo-maskable.png',
-      //     sizes: '512x512',
-      //     type: 'image/png',
-      //     purpose: 'maskable',
-      //   },
-      // ],
     },
     pwaAssets: {
       config: true,
@@ -52,12 +29,15 @@ export default defineNuxtConfig({
       cleanupOutdatedCaches: true,
       clientsClaim: true,
     },
-    // injectManifest: {
-    //   globPatterns: ['**/*.{js,css,html,jpg,png,svg,ico,json}'],
-    // },
+    injectManifest: {
+      globPatterns: [
+        '**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}',
+      ],
+      globIgnores: ['manifest.webmanifest'],
+    },
     client: {
       installPrompt: true,
-      periodicSyncForUpdates: 12 * 60 * 60,
+      periodicSyncForUpdates: 5 * 60,
     },
     devOptions: {
       enabled: true,
